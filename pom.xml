@@ -10,7 +10,7 @@
     </parent>
     <groupId>za.co.rendani</groupId>
     <artifactId>myworld</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>myworld</name>
     <description>Personal Website Initial</description>
 
