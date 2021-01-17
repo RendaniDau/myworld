@@ -1,0 +1,63 @@
+<html>
+<head>
+
+</head>
+<body>
+    <h1>Yoco Integration Test</h1>
+    <p>
+        Use Card #: <em>4111 1111 1111 1111</em><br/>
+        Expiry Date: <em>Any date in the future</em><br/>
+        CVV: <em>100</em><br/>
+
+    </p>
+    <!-- Create a pay button that will open the popup-->
+    <button id="checkout-button">Pay</button>
+</body>
+<!-- Include the Yoco SDK in your web page -->
+<script src="https://js.yoco.com/sdk/v1/yoco-sdk-web.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    var yoco = new window.YocoSDK({
+        publicKey: 'pk_test_5cb66158qRYr73Xa5444',
+    });
+    var checkoutButton = document.querySelector('#checkout-button');
+    checkoutButton.addEventListener('click', function () {
+        yoco.showPopup({
+            amountInCents: 2799,
+            currency: 'ZAR',
+            name: 'SyntaxZA',
+            description: 'SyntaxZA - By Geeks for Geeks',
+            callback: function (result) {
+                console.log(result);
+                // This function returns a token that your server can use to capture a payment
+                if (result.error) {
+                    const errorMessage = result.error.message;
+                    alert("yoco error occured: " + errorMessage);
+                } else {
+                    console.log("card successfully tokenised: " + result.id);
+                    // In a real integration - you would now pass this chargeToken back to your
+                    // server along with the order/basket that the customer has purchased.
+                    $.ajax({
+                        url: '/payment',
+                        dataType: 'json',
+                        type: 'post',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            orderId: "1",
+                            paymentReferenceId: result.id,
+                            amountInCents: 2799
+                        }),
+                        processData: false,
+                        success: function (data) {
+                            alert("Payment successful\n" + JSON.stringify(data));
+                        },
+                        error: function (data) {
+                            alert("Payment failed\n" + JSON.stringify(data));
+                        }
+                    });
+                }
+            }
+        })
+    });
+</script>
+</html>
